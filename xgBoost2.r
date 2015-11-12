@@ -65,8 +65,8 @@ param <- list(  objective = "reg:linear", 	# specify the learning task
 
 clf <- xgb.train(	params = param, 
 					data = dtrain, 			# xgb.DMatrix training data
-					nrounds = 2500, 		# changed from 300
-					verbose = 2,			# print information of performance
+					nrounds = 200, 		# changed from 300
+					verbose = 0,			# print information of performance
 					early.stop.round = 100,	# stop if performance gets worse after the first n rounds
 					watchlist = watchlist,
 					maximize = FALSE,		# the lower the evaluation the better
