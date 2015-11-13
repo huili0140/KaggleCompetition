@@ -38,7 +38,7 @@ test <- subset(total, Date >= "2015-08-01")
 
 
 tra <- train[,feature.names]
-h<-sample(nrow(train),10000)
+h <- sample(nrow(train),10000)
 
 RMPSE <- function(preds, dtrain) {
   labels <- getinfo(dtrain, "label")
@@ -49,28 +49,29 @@ RMPSE <- function(preds, dtrain) {
 }
 
 dval <- xgb.DMatrix(data = data.matrix(tra[h,]), 
-					label = log1p(train$Sales[h,]))
+					label = log1p(train$Sales[h]))
 dtrain <- xgb.DMatrix(data = data.matrix(tra[-h,]),
-					label = log1p(train$Sales[-h,]))
+					label = log1p(train$Sales[-h]))
 watchlist <- list(val = dval, train = dtrain)
 
+set.seed(100)
 param <- list(  objective = "reg:linear", 	# specify the learning task
                 booster = "gbtree",			# select booster from gbtree or gblinear
-                eta = 0.02, 				# control the learning rate, 0.06, 0.01,
+                eta = 0.01, 				# control the learning rate, 0.06, 0.02, 0.01,
                 max_depth = 10, 			# maximum depth of the tree
-				min_child_weight = 10, 		# larger to be more conservative
+				min_child_weight = 5, 		# larger to be more conservative
                 subsample = 0.9, 			# sub-sample ratio of the training instances
                 colsample_bytree = 0.7	 	# sub-sample ratio of the columns			
 )
 
 clf <- xgb.train(	params = param, 
 					data = dtrain, 			# xgb.DMatrix training data
-					nrounds = 200, 		# changed from 300
+					nrounds = 3000, 		# changed from 300
 					verbose = 0,			# print information of performance
 					early.stop.round = 100,	# stop if performance gets worse after the first n rounds
 					watchlist = watchlist,
 					maximize = FALSE,		# the lower the evaluation the better
-					feval = RMPSE,			# custimized evaluation function
+					feval = RMPSE,			# customized evaluation function
 					nthreads = 4
 )
 
