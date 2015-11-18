@@ -3,9 +3,9 @@ library(h2o)
 h2o.init(nthreads=-1, max_mem_size='6G')
 
 cat("Reading in the datasets...\n")
-train <- read.csv("../input/train.csv")
-test  <- read.csv("../input/test.csv")
-store <- read.csv("../input/store.csv")
+train <- read.csv("train.csv")
+test  <- read.csv("test.csv")
+store <- read.csv("store.csv")
 
 cat("Formatting the datasets...\n")
 train <- train[train$Sales > 0,]  
@@ -39,7 +39,7 @@ trainHex<-as.h2o(train)
 rfHex <- h2o.randomForest(x=cols,
                           y="LogSales", 
                           ntrees = 200, # 100
-                          max_depth = 20, # 30
+                          max_depth = 30, # 20
                           nbins_cats = 1115, ## allow it to fit store ID
                           training_frame=trainHex)
 
@@ -56,4 +56,4 @@ summary(pred)
 submission <- data.frame(Id=test$Id, Sales=pred)
 
 cat("saving the submission file\n")
-write.csv(submission, "h2o_rf.csv",row.names=F)
+write.csv(submission, "h2o.rf.200.csv",row.names=F)
