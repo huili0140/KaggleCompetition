@@ -28,12 +28,13 @@ test <- subset(total, Date >= "2015-08-01")
 cat("Building the model...\n")
 cols <- names(train)[c(1,2,7:9,11:22)]
 cols
-# set.seed(1014)
+
+set.seed(1014)
 clf <- randomForest(train[,cols], 
-                    log(train$Sales+1),
-                    mtry=5,
-                    ntree=20,
-                    sampsize=100000,
+                    log1p(train$Sales),
+                    mtry=30,
+                    ntree=10,
+                    sampsize=50000,
                     do.trace=TRUE)
 
 
@@ -43,8 +44,8 @@ plot(clf)
 plot(importance(clf), lty=2, pch=16)
 
 cat("Predicting Sales...\n")
-pred <- exp(predict(clf, test[, cols])) -1
+pred <- expm1(predict(clf, test[, cols])) 
 submission <- data.frame(Id=test$Id, Sales=pred)
 
 cat("Saving the submission file...\n")
-write.csv(submission, "randomForest.csv", row.names = FALSE)
+write.csv(submission, "randomForest.5.20.100k.csv", row.names = FALSE)
